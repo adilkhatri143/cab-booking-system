@@ -49,9 +49,9 @@ def passenger_registration(params, request):
                 'message': response_list
             }
         except:
-            print(traceback.print_exc())
+            traceback.print_exc()
     except:
-        print(traceback.print_exc())
+        traceback.print_exc()
 
 
 def book_cab(params, request):
@@ -73,7 +73,6 @@ def book_cab(params, request):
                 'status': 'error',
                 'error_code': 'P002',
                 'message': ['please provide valid mobile number.']
-
             }
 
         try:
@@ -124,6 +123,58 @@ def book_cab(params, request):
                 }
 
         except:
-            print(traceback.print_exc())
+            traceback.print_exc()
     except:
-        print(traceback.print_exc())
+        traceback.print_exc()
+
+
+def passenger_history(params, request):
+    try:
+        passenger_number = params['passenger_number']
+
+        if not passenger_number:
+            return {
+                'status': 'error',
+                'error_code': 'P001',
+                'messages': ['Please pass mandatory parameters.']
+            }
+
+        if passenger_number and passenger_number.strip() != "" and not commonlib_utils.validate_mobile_number(
+                passenger_number):
+            return {
+                'status': 'error',
+                'error_code': 'P002',
+                'message': ['please provide valid mobile number.']
+
+            }
+
+        try:
+            fetch_passenger_history = PassengerHistory.objects.select_related('passenger').filter(passenger__number=passenger_number)
+
+            if fetch_passenger_history:
+                response_list = []
+                for ph in fetch_passenger_history:
+                    # ph = passenger_history
+                    passenger_details = {
+                        'passenger_name': ph.passenger.first_name,
+                        'driver_name': ph.driver.first_name,
+                        'source_address': ph.source_address,
+                        'destination_address': ph.destination_address
+                    }
+                    response_list.append(passenger_details)
+
+                return {
+                    'status': 'success',
+                    'error_code': '',
+                    'message': response_list
+                }
+            else:
+                return {
+                    'status': 'error',
+                    'error_code': 'P003',
+                    'message': ['Passenger history does not exist.']
+                }
+        except:
+            traceback.print_exc()
+    except:
+        traceback.print_exc()

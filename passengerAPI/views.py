@@ -28,3 +28,13 @@ class BookCab(APIView):
 
         result = passenger_utils.book_cab(params, request)
         return commonlib_utils.response(result, status.HTTP_200_OK)
+
+
+class PassengerHistory(APIView):
+    def post(self, request):
+        params = {
+            'passenger_number': request.data.get('passenger_number', None)
+        }
+
+        result = passenger_utils.passenger_history(params, request)
+        return commonlib_utils.response(result, status.HTTP_200_OK)
