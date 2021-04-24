@@ -1,0 +1,2 @@
+FREE = 'Free'
+OCCUPIED = 'OCCUPIED'
